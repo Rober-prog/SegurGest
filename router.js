@@ -1,20 +1,30 @@
-import { byId } from './utils.js';
-
 export function initRouter({ onMis, onConta, onAdd }) {
+  // Mapeo de secciones
   const sections = {
-    welcome: byId('welcome'),
-    menu: byId('menu'),
-    mis: byId('mis'),
-    add: byId('add'),
-    conta: byId('conta')
+    welcome: document.getElementById('welcome'),
+    menu: document.getElementById('menu'),
+    mis: document.getElementById('mis'),
+    add: document.getElementById('add'),
+    conta: document.getElementById('conta')
   };
 
-  function go(id) {
-    Object.values(sections).forEach(s => s?.classList.remove('active'));
-    const target = sections[id];
-    if (!target) return;
-    target.classList.add('active');
+  // Pila de historial para controlar retroceso
+  const historyStack = [];
 
+  // Función para cambiar de sección
+  function go(id) {
+    if (!sections[id]) return;
+
+    // Guardar historial, excepto si vamos a la misma sección consecutiva
+    if (historyStack[historyStack.length - 1] !== id) {
+      historyStack.push(id);
+    }
+
+    // Ocultar todas y mostrar la deseada
+    Object.values(sections).forEach(s => s.classList.remove('active'));
+    sections[id].classList.add('active');
+
+    // Llamar callbacks si existen
     if (id === 'mis') onMis?.();
     if (id === 'conta') onConta?.();
     if (id === 'add') onAdd?.();
@@ -22,16 +32,31 @@ export function initRouter({ onMis, onConta, onAdd }) {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
-  // Delegación de eventos: funciona aunque los botones se creen después
-  document.addEventListener('click', (e) => {
-    const btn = e.target.closest('[data-go]');
-    if (!btn) return;
-    e.preventDefault();
-    go(btn.dataset.go);
-  });
+  // Configurar los botones de navegación
+  function setupNavigation() {
+    document.querySelectorAll('[data-go]').forEach(btn => {
+      btn.onclick = (e) => {
+        e.preventDefault();
+        go(btn.dataset.go);
+      };
+    });
+  }
 
-  // Inicializamos la vista
-  go('welcome');
+  setupNavigation();
 
-  return go;
+  // Exponer función para retroceso
+  function goBack() {
+    if (historyStack.length > 1) {
+      historyStack.pop(); // eliminar sección actual
+      const prev = historyStack[historyStack.length - 1];
+      go(prev);
+      historyStack.pop(); // quitarla para que no se duplique en el push
+    } else {
+      // Aquí puedes mostrar tu popup de confirmación de salida
+      return true; // indica que es la última sección
+    }
+    return false;
+  }
+
+  return { go, goBack };
 }
