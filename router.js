@@ -1,54 +1,38 @@
-import { byId } from './utils.js';
+let historyStack = ['welcome']; // Pantalla inicial
 
-const sections = {
-  welcome: byId('welcome'),
-  menu: byId('menu'),
-  mis: byId('mis'),
-  add: byId('add'),
-  conta: byId('conta')
-};
+export function initRouter({ onMis, onConta, onAdd }) {
+    const sections = { welcome: byId('welcome'), menu: byId('menu'), mis: byId('mis'), add: byId('add'), conta: byId('conta') };
+    
+    function go(id) {
+        Object.values(sections).forEach(s => s.classList.remove('active'));
+        sections[id]?.classList.add('active');
+        historyStack.push(id); // Guardar historial
+        if(id==='mis') onMis?.();
+        if(id==='conta') onConta?.();
+        if(id==='add') onAdd?.();
+        window.scrollTo({top:0, behavior:'smooth'});
+    }
 
-let historyStack = ['welcome'];
+    function goBack() {
+        if (historyStack.length > 1) {
+            historyStack.pop();
+            const last = historyStack[historyStack.length - 1];
+            Object.values(sections).forEach(s => s.classList.remove('active'));
+            sections[last]?.classList.add('active');
+            return false; // No salir de la app
+        } else {
+            return true; // Estamos en la primera pantalla
+        }
+    }
 
-function go(id) {
-  if (!sections[id]) return;
+    window.router = { goBack };
 
-  Object.values(sections).forEach(s => s.classList.remove('active'));
-  sections[id].classList.add('active');
-
-  // Actualizar historial
-  if (historyStack[historyStack.length - 1] !== id) {
-    historyStack.push(id);
-  }
-
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-}
-
-function goBack() {
-  if (historyStack.length > 1) {
-    historyStack.pop();
-    const previous = historyStack[historyStack.length - 1];
-    go(previous);
-    return false; // No salir
-  } else {
-    return true; // Primera pantalla, preguntar salir
-  }
-}
-
-// Botones con data-go
-function setupNavigation() {
-  document.querySelectorAll('[data-go]').forEach(btn => {
-    btn.addEventListener('click', e => {
-      e.preventDefault();
-      go(btn.dataset.go);
+    document.querySelectorAll('[data-go]').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            go(btn.dataset.go);
+        });
     });
-  });
+
+    return go;
 }
-
-setupNavigation();
-
-const observer = new MutationObserver(setupNavigation);
-observer.observe(document.body, { childList: true, subtree: true });
-
-// Hacemos router global para poder llamarlo desde Android
-window.router = { go, goBack };
