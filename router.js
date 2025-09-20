@@ -6,7 +6,7 @@ export function initRouter({ onMis, onConta, onAdd }) {
     Object.values(sections).forEach(s => s.classList.remove('active'));
     sections[id]?.classList.add('active');
 
-    // Llamada a Android para historial
+    // ENVIAR SECCIÓN ANTERIOR A ANDROID
     if (window.AndroidHistory && id !== currentSection) {
       AndroidHistory.notifySection(currentSection);
       currentSection = id;
