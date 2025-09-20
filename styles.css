@@ -336,7 +336,7 @@ textarea{ min-height:86px; resize:vertical }
   margin: 0 auto;
 }
 .modal-head{ display:flex; align-items:center; justify-content:space-between; gap:10px; padding:18px 24px; border-bottom:1px solid var(--modal-border) }
-.modal-body{ padding:18px 24px; max-height: calc(100vh - 220px); overflow:auto; }
+.modal-body{ padding:18px 24px; max-height: calc(100dvh - 180px); overflow:auto; }
 .close{ background:transparent; border:0; color:var(--muted); font-size:20px; cursor:pointer }
 
 /* Chart */
@@ -465,7 +465,7 @@ textarea{ min-height:86px; resize:vertical }
 #add .panel, .modal-body {
   overflow:auto;
   -webkit-overflow-scrolling: touch;
-  max-height: calc(100vh - 120px);
+  max-height: calc(100dvh - 180px); /* Changed from 100vh - 120px, using dvh for better mobile support */
 }
 
 /* Hide scrollbars visually while keeping scroll functionality */
@@ -480,7 +480,7 @@ textarea{ min-height:86px; resize:vertical }
 /* Specific styles for the Accounting section to allow scrolling and add top padding */
 #conta.section {
   display: block;
-  padding-top: 80px;
+  padding-top: 100px; /* Adjusted to create more space for the back button */
   padding-bottom: var(--page-horizontal-padding); /* Add bottom padding to allow full scroll of content */
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
@@ -494,7 +494,7 @@ textarea{ min-height:86px; resize:vertical }
 /* Specific styles for the Add Insurance section to allow scrolling and add top padding */
 #add.section {
   display: block;
-  padding-top: 80px;
+  padding-top: 100px; /* Adjusted to create more space for the back button */
   padding-bottom: var(--page-horizontal-padding); /* Add bottom padding to allow full scroll of content */
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
@@ -508,7 +508,7 @@ textarea{ min-height:86px; resize:vertical }
 /* Specific styles for the My Insurances section to allow scrolling and add top padding */
 #mis.section {
   display: block;
-  padding-top: 80px;
+  padding-top: 100px; /* Adjusted to create more space for the back button */
   padding-bottom: var(--page-horizontal-padding); /* Add bottom padding to allow full scroll of content */
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
@@ -521,7 +521,7 @@ textarea{ min-height:86px; resize:vertical }
 
 .back-btn{
   position: absolute;
-  top: 20px;
+  top: 60px; /* Moved down from 20px */
   left: calc(var(--page-horizontal-padding) + var(--back-btn-left-offset)); /* Adjusted position to move it further left */
   z-index: 5;
   width:48px;
