@@ -1,85 +1,35 @@
-// router.js
-let currentScreen = "welcome"; // pantalla inicial
+function go(pageId) {
+  // Ocultar todas las secciones
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
 
-function navigateTo(screen) {
-    const content = document.getElementById("app");
+  // Mostrar la sección solicitada
+  const section = document.getElementById(pageId);
+  if (section) section.classList.add('active');
 
-    if (screen === "welcome") {
-        // 🚫 No permitimos volver a welcome si ya se entró
-        if (currentScreen !== "welcome") return;
-        content.innerHTML = `
-            <div class="welcome-screen">
-                <h1>Bienvenido</h1>
-                <button onclick="navigateTo('menu')">Entrar</button>
-            </div>
-        `;
-    }
-
-    if (screen === "menu") {
-        content.innerHTML = `
-            <div class="menu-screen">
-                <h2>Menú Principal</h2>
-                <ul>
-                    <li onclick="navigateTo('seguros')">Mis seguros</li>
-                    <li onclick="navigateTo('introducir')">Introducir seguro</li>
-                    <li onclick="navigateTo('estado')">Estado de cuentas</li>
-                </ul>
-            </div>
-        `;
-    }
-
-    if (screen === "seguros") {
-        content.innerHTML = `
-            <div class="sub-screen">
-                <h2>Mis Seguros</h2>
-                <button onclick="navigateTo('menu')">Volver al menú</button>
-            </div>
-        `;
-    }
-
-    if (screen === "introducir") {
-        content.innerHTML = `
-            <div class="sub-screen">
-                <h2>Introducir Seguro</h2>
-                <button onclick="navigateTo('menu')">Volver al menú</button>
-            </div>
-        `;
-    }
-
-    if (screen === "estado") {
-        content.innerHTML = `
-            <div class="sub-screen">
-                <h2>Estado de cuentas</h2>
-                <button onclick="navigateTo('menu')">Volver al menú</button>
-            </div>
-        `;
-    }
-
-    currentScreen = screen;
+  // Manipular el historial
+  if (pageId === 'menu') {
+    // El menú reemplaza el historial (no se puede volver a welcome)
+    history.replaceState({ page: 'menu' }, 'menu', '#menu');
+  } else {
+    // El resto de pantallas se añaden al historial normal
+    history.pushState({ page: pageId }, pageId, '#' + pageId);
+  }
 }
 
-// Manejo del botón físico de retroceso Android
-document.addEventListener("backbutton", function (e) {
-    e.preventDefault();
-
-    if (currentScreen === "welcome") {
-        // 🚫 Nunca volver a welcome → forzamos a menú
-        navigateTo("menu");
-        return;
-    }
-
-    if (currentScreen === "menu") {
-        if (confirm("¿Deseas salir de la aplicación?")) {
-            navigator.app.exitApp();
-        }
-        return;
-    }
-
-    // Si estamos en cualquier otra pantalla, retrocede al menú
-    navigateTo("menu");
-}, false);
-
-// Inicialización
-document.addEventListener("DOMContentLoaded", () => {
-    navigateTo("welcome");
+// Manejo del botón atrás del navegador (o WebView)
+window.addEventListener('popstate', function (event) {
+  if (event.state && event.state.page) {
+    go(event.state.page);
+  }
 });
+
+// Inicializar la vista según la URL
+window.addEventListener('load', function () {
+  const hash = window.location.hash.replace('#', '');
+  if (hash) {
+    go(hash);
+  } else {
+    go('welcome'); // Pantalla inicial
+  }
+});
+
