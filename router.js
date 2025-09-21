@@ -1,70 +1,53 @@
-function initRouter() {
-  const sections = {
-    welcome: document.getElementById('welcome'),
-    menu: document.getElementById('menu'),
-    mis: document.getElementById('mis'),
-    add: document.getElementById('add'),
-    conta: document.getElementById('conta'),
-  };
+function navigateTo(route, addToHistory = true) {
+    const content = document.getElementById("app");
 
-  function go(pageId) {
-    // Ocultar todas las secciones
-    Object.values(sections).forEach(s => s && s.classList.remove('active'));
-
-    // Mostrar la sección pedida
-    if (sections[pageId]) {
-      sections[pageId].classList.add('active');
+    if (route === "welcome") {
+        content.innerHTML = `
+            <div class="welcome">
+                <h1>Bienvenido a SegurGest</h1>
+                <button id="enterBtn">Entrar</button>
+            </div>
+        `;
+        document.getElementById("enterBtn").onclick = () => navigateTo("menu");
+        if (addToHistory) history.replaceState({ route }, "", "#welcome");
     }
 
-    // Historial:
-    if (pageId === 'menu') {
-      // Desde el menú ya no se puede retroceder a welcome
-      history.replaceState({ page: 'menu' }, 'menu', '#menu');
-    } else {
-      history.pushState({ page: pageId }, pageId, '#' + pageId);
+    if (route === "menu") {
+        content.innerHTML = `
+            <div class="menu">
+                <h2>Menú principal</h2>
+                <ul>
+                    <li><a href="#" onclick="navigateTo('seguros')">Mis seguros</a></li>
+                    <li><a href="#" onclick="navigateTo('introducir')">Introducir seguro</a></li>
+                    <li><a href="#" onclick="navigateTo('estado')">Estado de cuentas</a></li>
+                </ul>
+            </div>
+        `;
+        if (addToHistory) history.pushState({ route }, "", "#menu");
     }
 
-    // Scroll arriba siempre
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }
-
-  // Vincular todos los botones con atributo data-go
-  function setupNavigation() {
-    document.querySelectorAll('[data-go]').forEach(btn => {
-      btn.addEventListener('click', e => {
-        e.preventDefault();
-        const target = btn.dataset.go;
-        if (target) go(target);
-      });
-    });
-  }
-
-  // Reconfigurar si se agregan botones dinámicamente
-  const observer = new MutationObserver(setupNavigation);
-  observer.observe(document.body, { childList: true, subtree: true });
-
-  // Manejo del botón atrás (navegación interna)
-  window.addEventListener('popstate', e => {
-    if (e.state && e.state.page) {
-      go(e.state.page);
+    if (route === "seguros") {
+        content.innerHTML = `<h2>Mis seguros</h2><button onclick="navigateTo('menu')">Volver al menú</button>`;
+        if (addToHistory) history.pushState({ route }, "", "#seguros");
     }
-  });
 
-  // Estado inicial
-  window.addEventListener('load', () => {
-    const hash = window.location.hash.replace('#', '');
-    if (hash && sections[hash]) {
-      go(hash);
-    } else {
-      go('welcome');
+    if (route === "introducir") {
+        content.innerHTML = `<h2>Introducir seguro</h2><button onclick="navigateTo('menu')">Volver al menú</button>`;
+        if (addToHistory) history.pushState({ route }, "", "#introducir");
     }
-  });
 
-  setupNavigation();
-
-  return go;
+    if (route === "estado") {
+        content.innerHTML = `<h2>Estado de cuentas</h2><button onclick="navigateTo('menu')">Volver al menú</button>`;
+        if (addToHistory) history.pushState({ route }, "", "#estado");
+    }
 }
 
-// Inicializar al cargar
-const go = initRouter();
+// Manejo del botón atrás del navegador
+window.onpopstate = (event) => {
+    if (event.state && event.state.route) {
+        navigateTo(event.state.route, false);
+    }
+};
 
+// Arranque siempre en welcome
+window.onload = () => navigateTo("welcome", false);
