@@ -1,34 +1,53 @@
-import { byId } from './utils.js';
-export function initRouter({ onMis, onConta, onAdd }){
-  const sections = { welcome: byId('welcome'), menu: byId('menu'), mis: byId('mis'), add: byId('add'), conta: byId('conta'), infoApp: byId('infoApp') };
-  
-  function go(id){
-    Object.values(sections).forEach(s=>s.classList.remove('active'));
-    sections[id]?.classList.add('active');
-    if(id==='mis') onMis?.();
-    if(id==='conta') onConta?.();
-    if(id==='add') onAdd?.();
-    window.scrollTo({top:0, behavior:'smooth'});
-  }
-  
-  // Set up click handlers for all data-go elements
-  function setupNavigation() {
-    document.querySelectorAll('[data-go]').forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        e.preventDefault();
-        go(btn.dataset.go);
-      });
-    });
-  }
-  
-  // Initial setup
-  setupNavigation();
-  
-  // Re-setup navigation when DOM changes (for dynamically added buttons)
-  const observer = new MutationObserver(() => {
-    setupNavigation();
-  });
-  observer.observe(document.body, { childList: true, subtree: true });
-  
-  return go;
+function navigateTo(route, addToHistory = true) {
+    const content = document.getElementById("app");
+
+    if (route === "welcome") {
+        content.innerHTML = `
+            <div class="welcome">
+                <h1>Bienvenido a SegurGest</h1>
+                <button id="enterBtn">Entrar</button>
+            </div>
+        `;
+        document.getElementById("enterBtn").onclick = () => navigateTo("menu");
+        if (addToHistory) history.replaceState({ route }, "", "#welcome");
+    }
+
+    if (route === "menu") {
+        content.innerHTML = `
+            <div class="menu">
+                <h2>Menú principal</h2>
+                <ul>
+                    <li><a href="#" onclick="navigateTo('seguros')">Mis seguros</a></li>
+                    <li><a href="#" onclick="navigateTo('introducir')">Introducir seguro</a></li>
+                    <li><a href="#" onclick="navigateTo('estado')">Estado de cuentas</a></li>
+                </ul>
+            </div>
+        `;
+        if (addToHistory) history.pushState({ route }, "", "#menu");
+    }
+
+    if (route === "seguros") {
+        content.innerHTML = `<h2>Mis seguros</h2><button onclick="navigateTo('menu')">Volver al menú</button>`;
+        if (addToHistory) history.pushState({ route }, "", "#seguros");
+    }
+
+    if (route === "introducir") {
+        content.innerHTML = `<h2>Introducir seguro</h2><button onclick="navigateTo('menu')">Volver al menú</button>`;
+        if (addToHistory) history.pushState({ route }, "", "#introducir");
+    }
+
+    if (route === "estado") {
+        content.innerHTML = `<h2>Estado de cuentas</h2><button onclick="navigateTo('menu')">Volver al menú</button>`;
+        if (addToHistory) history.pushState({ route }, "", "#estado");
+    }
 }
+
+// Manejo del botón atrás del navegador
+window.onpopstate = (event) => {
+    if (event.state && event.state.route) {
+        navigateTo(event.state.route, false);
+    }
+};
+
+// Arranque siempre en welcome
+window.onload = () => navigateTo("welcome", false);
