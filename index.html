@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <title>Gestor de Seguros</title>
+  <meta name="color-scheme" content="dark light">
+  <link rel="stylesheet" href="styles.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+</head>
+<body>
+  <div class="wrap">
+    <main class="container">
+      <!-- Welcome -->
+      <section id="welcome" class="section hero active">
+        
+        <div class="hero-card card">
+          <div class="logo" style="margin:0 auto 10px; background: url('1758114112568.png') no-repeat center center; background-size: contain; box-shadow: none;"></div>
+          <h1 class="title">SegurGest</h1>
+          <p class="subtitle">Organiza tus pólizas, controla vencimientos y entiende tus gastos al instante.</p>
+          <button class="cta" data-go="menu">Entrar</button>
+          <a href="#" class="info-app-link" data-go="infoApp">InfoApp</a>
+        </div>
+      </section>
+
+      <!-- Main Menu -->
+      <section id="menu" class="section">
+        <div class="grid menu-stack">
+          <div class="col-12">
+            <div class="card panel menu-card" style="display:grid; gap:10px;">
+              <h2>Mis seguros</h2>
+              <p class="muted">Consulta y edita tus pólizas.</p>
+              <button class="btn primary" data-go="mis">Abrir</button>
+            </div>
+          </div>
+          <div class="col-12">
+            <div class="card panel menu-card" style="display:grid; gap:10px;">
+              <h2>Introducir seguro</h2>
+              <p class="muted">Añade una nueva póliza.</p>
+              <button class="btn primary" data-go="add">Abrir</button>
+            </div>
+          </div>
+          <div class="col-12">
+            <div class="card panel menu-card" style="display:grid; gap:10px;">
+              <h2>Contabilidad</h2>
+              <p class="muted">Resumen económico y gráfico.</p>
+              <button class="btn primary" data-go="conta">Abrir</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Mis Seguros -->
+      <section id="mis" class="section">
+        
+        <div class="card panel">
+          <div class="row" style="justify-content:space-between; margin-bottom:8px;">
+            <h2>Mis seguros</h2>
+          </div>
+          <div class="toolbar" style="margin-bottom:10px;">
+            <input id="search" class="search" placeholder="Buscar por compañía, póliza o tipo..." />
+            <select id="filterType" class="search" style="max-width:220px;">
+              <option value="">Todos los tipos</option>
+              <option>Vehículo</option>
+              <option>Vivienda</option>
+              <option>Salud</option>
+              <option>Vida</option>
+              <option>Decesos</option>
+              <option>Otros</option>
+            </select>
+          </div>
+          <div id="list" class="grid"></div>
+          <div id="emptyList" class="empty hidden">
+            Aún no has añadido ningún seguro. Usa "+ Añadir" para comenzar.
+          </div>
+        </div>
+      </section>
+
+      <!-- Introducir Seguro -->
+      <section id="add" class="section">
+        
+        <div class="card panel">
+          <form id="insuranceForm" novalidate>
+            <div class="field">
+              <label for="type">Tipo de seguro</label>
+              <select id="type" required>
+                <option value="">Selecciona...</option>
+                <option>Vehículo</option>
+                <option>Vivienda</option>
+                <option>Salud</option>
+                <option>Vida</option>
+                <option>Decesos</option>
+                <option>Otros</option>
+              </select>
+            </div>
+
+            <div id="typeFields" class="grid"></div>
+
+            <div class="actions">
+              <button type="button" class="btn ghost" id="cancelEdit" style="display:none">Cancelar</button>
+              <button type="reset" class="btn">Limpiar</button>
+              <button type="submit" class="btn primary" id="saveBtn">Guardar</button>
+            </div>
+          </form>
+        </div>
+      </section>
+
+      <!-- Contabilidad -->
+      <section id="conta" class="section">
+        
+        <div class="grid">
+          <div class="col-8">
+            <div class="card panel">
+              <h2>Distribución mensual</h2>
+              <div style="position: relative; height: 300px; width: 100%;">
+                <canvas id="chart"></canvas>
+              </div>
+              <div id="legend" class="legend"></div>
+            </div>
+          </div>
+          <div class="col-4">
+            <div class="card panel">
+              <h2>Resumen anual</h2>
+              <div id="summaryList" class="grid"></div>
+              <div class="row" style="justify-content:space-between; margin-top:12px; border-top:1px dashed rgba(255,255,255,.12); padding-top:12px;">
+                <div class="muted">Total anual</div>
+                <div class="strong price" id="totalAnnual">0 €</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Info App Section -->
+      <section id="infoApp" class="section info-app-section">
+        <div class="card panel info-app-card">
+          <button class="close-info-app" data-go="welcome" aria-label="Volver">✕</button>
+          <p>Esta aplicación ha sido creada por <strong>Roberto Blanco Díaz</strong>. Queda prohibida su distribución, uso o manipulación sin el previo consentimiento del autor. La aplicación no comparte datos personales de ningún tipo. El usuario es el responsable de los datos personales introducidos para su uso. Para más información o personalización pueden enviar un email a: <a href="mailto:ceo.simulapp@gmail.com">ceo.simulapp@gmail.com</a></p>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Modal Detalle / Edición rápida -->
+  <div id="modal" class="modal">
+    <div class="modal-card card">
+      <div class="modal-head">
+        <div class="row">
+          <div class="tag" id="modalType">Tipo</div>
+          <div class="strong" id="modalCompany">Compañía</div>
+          <div class="muted" id="modalPolicy">Póliza</div>
+        </div>
+        <button class="close" aria-label="Cerrar" id="modalClose">✕</button>
+      </div>
+      <div class="modal-body">
+        <div id="modalContent" class="grid"></div>
+        <div class="actions" style="margin-top:10px;">
+          <button class="btn danger" id="deleteBtn">Eliminar</button>
+          <button class="btn primary" id="editBtn">Editar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Success Popup -->
+  <div id="successPopup" class="success-popup hidden">
+    Seguro guardado correctamente
+  </div>
+
+  <!-- Confirmation Popup -->
+  <div id="confirmationPopup" class="confirmation-popup hidden" role="alertdialog" aria-modal="true">
+    <div class="confirmation-popup-message"></div>
+    <div class="confirmation-popup-actions">
+      <button class="btn ghost" id="confirmCancelBtn">Cancelar</button>
+      <button class="btn danger" id="confirmDeleteBtn">Eliminar</button>
+    </div>
+  </div>
+
+  <script type="module" src="main.js"></script>
+</body>
+</html>
