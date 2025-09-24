@@ -10,46 +10,37 @@ export function initRouter({ onMis, onConta, onAdd }) {
     infoApp: byId('infoApp')
   };
 
-  // Hacer la función go global para que Android pueda acceder
+  // Hacer la función go global para Android
   window.go = function(id) {
     if (!sections[id]) {
       console.error('Sección no encontrada:', id);
       return false;
     }
     
-    // Ocultar todas las secciones
+    // Solo manipular clases, NO display (para no romper CSS)
     Object.values(sections).forEach(s => {
-      if (s) {
-        s.classList.remove('active');
-        s.style.display = 'none';
-      }
+      if (s) s.classList.remove('active');
     });
     
-    // Mostrar la sección solicitada
-    sections[id].style.display = 'block';
     sections[id].classList.add('active');
 
-    // Llamar a los callbacks si existen
     if (id === 'mis') onMis?.();
     if (id === 'conta') onConta?.();
     if (id === 'add') onAdd?.();
 
-    console.log('Navegación exitosa a:', id);
+    console.log('Navegado a:', id);
     return true;
   };
 
-  // Configurar navegación
   function setupNavigation() {
     document.querySelectorAll('[data-go]').forEach(btn => {
       btn.addEventListener('click', (e) => {
         e.preventDefault();
-        const target = btn.dataset.go;
-        window.go(target);
+        window.go(btn.dataset.go);
       });
     });
   }
 
-  // Botón "Entrar"
   const enterBtn = byId('enterBtn');
   if (enterBtn) {
     enterBtn.addEventListener('click', (e) => {
@@ -58,9 +49,8 @@ export function initRouter({ onMis, onConta, onAdd }) {
     });
   }
 
-  // Inicializar con welcome
+  // Inicializar
   window.go('welcome');
-  
   setupNavigation();
 
   const observer = new MutationObserver(() => {
