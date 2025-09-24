@@ -10,50 +10,63 @@ export function initRouter({ onMis, onConta, onAdd }) {
     infoApp: byId('infoApp')
   };
 
-  function go(id) {
-    Object.values(sections).forEach(s => s.classList.remove('active'));
-    sections[id]?.classList.add('active');
+  // Hacer la función go global para que Android pueda acceder
+  window.go = function(id) {
+    if (!sections[id]) {
+      console.error('Sección no encontrada:', id);
+      return false;
+    }
+    
+    // Ocultar todas las secciones
+    Object.values(sections).forEach(s => {
+      if (s) {
+        s.classList.remove('active');
+        s.style.display = 'none';
+      }
+    });
+    
+    // Mostrar la sección solicitada
+    sections[id].style.display = 'block';
+    sections[id].classList.add('active');
 
+    // Llamar a los callbacks si existen
     if (id === 'mis') onMis?.();
     if (id === 'conta') onConta?.();
     if (id === 'add') onAdd?.();
 
-    // Notificar a Android el cambio de pantalla
-    if (window.Android && window.Android.onNavigate) {
-      window.Android.onNavigate(id);
-    }
+    console.log('Navegación exitosa a:', id);
+    return true;
+  };
 
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }
-
-  // Configurar todos los botones con data-go
+  // Configurar navegación
   function setupNavigation() {
     document.querySelectorAll('[data-go]').forEach(btn => {
       btn.addEventListener('click', (e) => {
         e.preventDefault();
-        go(btn.dataset.go);
+        const target = btn.dataset.go;
+        window.go(target);
       });
     });
   }
 
-  // Botón "Entrar" en la pantalla de bienvenida
+  // Botón "Entrar"
   const enterBtn = byId('enterBtn');
   if (enterBtn) {
     enterBtn.addEventListener('click', (e) => {
       e.preventDefault();
-      go('menu'); // Ir al menú
+      window.go('menu');
     });
   }
 
-  // Inicializar navegación
+  // Inicializar con welcome
+  window.go('welcome');
+  
   setupNavigation();
 
-  // Re-setup navigation si el DOM cambia (botones dinámicos)
   const observer = new MutationObserver(() => {
     setupNavigation();
   });
   observer.observe(document.body, { childList: true, subtree: true });
 
-  return go;
+  return window.go;
 }
-
