@@ -694,30 +694,9 @@ textarea{ min-height:86px; resize:vertical }
   display: none; /* Webkit */
 }
 
-.back-btn{
-  position: absolute;
-  top: 60px; /* Moved down from 20px */
-  left: calc(var(--page-horizontal-padding) + var(--back-btn-left-offset)); /* Adjusted position to move it further left */
-  z-index: 5;
-  width:48px;
-  height:48px;
-  border-radius:10px;
-  border:1px solid var(--back-btn-border);
-  background: var(--back-btn-bg-alpha);
-  color:var(--text);
-  display:inline-grid;
-  place-items:center;
-  cursor:pointer;
-  font-weight:700;
-  font-size:18px;
-  transition: transform .08s ease, background .14s ease;
-}
-.back-btn:active{ transform: translateY(1px) }
-#menu .back-btn, #welcome .back-btn{ display:none; }
-
 /* Accounting Summary List Item padding */
 #summaryList .col-12 > .row {
-  padding:10px 14px;
+  padding:6px 10px; /* Reduced from 10px 14px */
   background:var(--summary-row-bg); border:1px solid var(--summary-row-border);
 }
 
@@ -806,3 +785,24 @@ textarea{ min-height:86px; resize:vertical }
   color: white;
   border: none;
 }
+
+.back-btn{
+  position: absolute;
+  top: 60px; /* Moved down from 20px */
+  left: calc(var(--page-horizontal-padding) + var(--back-btn-left-offset)); /* Adjusted position to move it further left */
+  z-index: 5;
+  width:48px;
+  height:48px;
+  border-radius:10px;
+  border:1px solid var(--back-btn-border);
+  background: var(--back-btn-bg-alpha);
+  color:var(--text);
+  display:inline-grid;
+  place-items:center;
+  cursor:pointer;
+  font-weight:700;
+  font-size:18px;
+  transition: transform .08s ease, background .14s ease;
+}
+.back-btn:active{ transform: translateY(1px) }
+#menu .back-btn, #welcome .back-btn{ display:none; }
