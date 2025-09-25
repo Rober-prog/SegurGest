@@ -615,7 +615,7 @@ textarea{ min-height:86px; resize:vertical }
 
 /* Accounting Summary List scrollable container */
 #summaryList {
-  max-height: calc(3 * 60px); /* Changed from 4 to 3 rows at ~60px each */
+  max-height: calc(3 * 50px); /* Changed from 3 * 60px to 3 * 50px for tighter fit */
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
   /* Hide scrollbars */
