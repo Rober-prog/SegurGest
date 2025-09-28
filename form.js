@@ -70,7 +70,7 @@ function commonMoneyCompanyPolicy(v={}, hideCompany=false, includePhone=false){
         ${PAY_FORMS.map(p=>`<option ${v.paymentForm===p?'selected':''}>${p}</option>`).join('')}
       </select>
     </div>
-    ${includePhone ? `<div class=\"col-6 field\"><label>Teléfono de contacto</label><input id=\"phone\" value=\"${v.phone||''}\" placeholder=\"+34 ...\"></div>`:''}
+    ${includePhone ? `<div class=\"col-6 field\"><label>Teléfono o E-mail</label><input id=\"phone\" value=\"${v.phone||''}\" placeholder=\"+34 ...\"></div>`:''}
   `;
 }
 const builders = {
